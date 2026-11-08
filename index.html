@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>薪酬委员会对高级管理岗考核打分评估表</title>
+<style>
+:root{
+  --navy:#0F2942; --navy2:#1B3550; --orange:#D98026; --gray:#E3E9EF;
+  --text:#1A1A1A; --sub:#5B6B7C; --line:#D6DEE6; --bg:#F4F6F8;
+  --ok:#2E7D5B; --warn:#C97C10; --bad:#B3323C; --info:#2B5F8E;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:14px/1.65 -apple-system,"Microsoft YaHei","PingFang SC",sans-serif}
+button,input,textarea,select{font-family:inherit}
+
+/* 抬头 */
+.hd{background:var(--navy);color:#fff;padding:15px 22px}
+.hd .t1{font-size:19px;font-weight:700;letter-spacing:1px}
+.hd .t2{font-size:12px;color:#A8C0D6;margin-top:3px}
+.hd .bar{display:flex;align-items:center;gap:14px;margin-top:11px;flex-wrap:wrap}
+.hd select{background:#1B3550;color:#fff;border:1px solid #46617E;border-radius:4px;padding:6px 10px;font-size:13px}
+.hd .lab{font-size:12.5px;color:#A8C0D6}
+.hd .sp{flex:1}
+.hd .btn-s{background:var(--orange);color:#fff;border:0;border-radius:4px;padding:7px 15px;font-size:13px;font-weight:600}
+
+/* 页签 */
+.tabs{display:flex;gap:4px;background:#fff;border-bottom:2px solid var(--line);padding:0 22px;flex-wrap:wrap}
+.tabs button{background:none;border:0;padding:11px 16px;font-size:14px;color:var(--sub);
+  border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer}
+.tabs button.on{color:var(--navy);font-weight:700;border-bottom-color:var(--orange)}
+
+.wrap{max-width:1160px;margin:0 auto;padding:18px 22px 70px}
+.card{background:#fff;border:1px solid var(--line);border-radius:6px;padding:16px 18px;margin-bottom:14px}
+.card h3{font-size:15px;color:var(--navy);margin:0 0 10px;padding-left:9px;border-left:3px solid var(--orange)}
+.muted{color:var(--sub);font-size:13px}
+.note{border-left:3px solid var(--info);background:#EEF4F9;padding:10px 13px;border-radius:0 4px 4px 0;font-size:13px;margin:10px 0}
+.note.warn{border-color:var(--warn);background:#FDF6E9}
+.note.ok{border-color:var(--ok);background:#EFF7F3}
+.note b{color:var(--navy)}
+
+/* 表格 */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{background:#EEF3F7;color:var(--navy);font-weight:600;font-size:12.5px}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+td.c,th.c{text-align:center}
+/* 明细表固定列宽，避免「结论」列被挤出表格 */
+table.dt,table.mx{table-layout:fixed}
+table.dt th,table.dt td{padding:7px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table.dt th:first-child,table.dt td:first-child{white-space:normal}
+
+/* 打分表 */
+.score{border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:16px;background:#fff}
+.score .sh{display:flex;align-items:center;gap:12px;padding:11px 15px;background:#F8FAFB;
+  border-bottom:1px solid var(--line);flex-wrap:wrap}
+.score .sh .nm{font-size:15px;font-weight:700;color:var(--navy)}
+.score .sh .sp{flex:1}
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:10px;border:1px solid}
+.p-g{color:var(--sub);border-color:var(--line);background:#F5F7F9}
+.p-ok{color:var(--ok);border-color:#A9CFBE;background:#EFF7F3}
+.p-warn{color:var(--warn);border-color:#E8C892;background:#FDF6E9}
+.p-bad{color:var(--bad);border-color:#E3B3B7;background:#FBEEEF}
+.p-info{color:var(--info);border-color:#B7CCDF;background:#EEF4F9}
+.score input[type=number]{width:64px;padding:5px 7px;border:1px solid var(--line);border-radius:4px;
+  font-size:14px;text-align:right;font-variant-numeric:tabular-nums}
+.score input[type=number]:focus{outline:2px solid #BFD3E6;border-color:var(--info)}
+.score input[type=number]:disabled{background:#F0F2F4;color:#9AA7B4}
+.score .hint{font-size:11px;color:var(--sub);display:block;margin-top:1px}
+.phd,.psub{display:none}
+.score table th,.score table td{padding:6px 9px;line-height:1.5}
+.score table td.muted{font-size:11px;line-height:1.45}
+.score tfoot td{background:#F8FAFB;font-weight:600;border-top:2px solid var(--navy)}
+.score .ft{padding:11px 15px;background:#F8FAFB;border-top:1px solid var(--line)}
+.score textarea{width:100%;min-height:48px;padding:7px 9px;border:1px solid var(--line);border-radius:4px;font:13px/1.5 inherit;resize:vertical}
+.btn{background:var(--navy);color:#fff;border:0;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer}
+.btn:hover{background:var(--navy2)}
+.btn.orange{background:var(--orange)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* 汇总矩阵 */
+.mx td.c{font-size:14px}
+.mx .self{color:#B0BAC5;font-size:12px}
+.mx .none{color:#C9D2DB;font-size:12px}
+.mx tfoot td{background:#EEF3F7;font-weight:700;border-top:2px solid var(--navy)}
+.avg{font-weight:700;color:var(--navy)}
+.bar{height:6px;background:var(--gray);border-radius:3px;overflow:hidden;margin-top:3px}
+.bar i{display:block;height:100%;border-radius:3px;background:var(--orange)}
+.kpi4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.kpi .l{font-size:12px;color:var(--sub)}
+.kpi .v{font-size:23px;font-weight:700;color:var(--navy);line-height:1.3}
+.kpi .s{font-size:12px;color:var(--sub)}
+@media(max-width:900px){.kpi4{grid-template-columns:1fr 1fr}}
+
+/* 汇总表标题 */
+.cap{display:block;text-align:center;font-size:17px;font-weight:700;color:var(--navy);
+  letter-spacing:.5px;margin:0 0 4px}
+.cap2{display:block;text-align:center;font-size:12px;color:var(--sub);margin:0 0 14px}
+
+/* 打印 */
+@media print{
+  @page{size:A4;margin:12mm 11mm}
+  body{background:#fff}
+  .hd,.tabs,.no-print{display:none!important}
+  .wrap{max-width:100%;padding:0}
+  .card{border:0;padding:0;margin:0}
+  .cap{display:block;text-align:center;font-size:16pt;font-weight:700;margin-bottom:4px}
+  .cap2{display:block;text-align:center;font-size:10pt;color:#444;margin-bottom:10px}
+  table{font-size:9pt}
+  th{background:#E8EDF2}
+  th,td{padding:3px 6px;line-height:1.35}
+  table.mx th div{font-size:8pt!important}
+  .card{break-inside:avoid;page-break-inside:avoid}
+  .card+.card{margin-top:5mm}
+  .card h3{margin:0 0 1.5mm}
+  .card .muted{font-size:8pt;line-height:1.45}
+  /* 打印稿：一页一份表，去掉按钮与输入提示，留手写签字位 */
+  .score{page-break-inside:avoid;page-break-after:always;margin-bottom:0}
+  .score:last-of-type{page-break-after:auto}
+  .score button,.score .hint{display:none!important}
+  .phd{display:block;text-align:center;font-size:13pt;font-weight:700;color:#0F2942;margin:0 0 1mm}
+  .psub{display:block;text-align:center;font-size:9pt;color:#444;margin:0 0 3mm;
+    padding-bottom:2mm;border-bottom:1.5pt solid #0F2942}
+  .score textarea::placeholder{color:transparent}
+  .score table th,.score table td{padding:8px 9px;line-height:1.5}
+  .score textarea{min-height:24mm}
+  .score::after{content:"委员签字：＿＿＿＿＿＿＿＿　　　　日期：＿＿＿＿年＿＿月＿＿日";
+    display:block;padding:6mm 15px 2mm;font-size:9pt;color:#333}
+  .score{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <div class="t1">薪酬委员会对高级管理岗考核打分评估表</div>
+  <div class="t2">考核年度 2026　·　委员 7 人　·　被考核公司领导 5 人　·　本人回避，不给自己打分</div>
+  <div class="bar">
+    <span class="lab">当前打分人</span>
+    <select id="who" onchange="pickMember(this.value)"></select>
+    <span class="lab" id="whoTip"></span>
+    <span class="sp"></span>
+    <button class="btn-s" onclick="printSum()">打印汇总表</button>
+  </div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button data-v="form" class="on">① 打分表</button>
+  <button data-v="sum">② 汇总表</button>
+  <button data-v="detail">③ 分项明细</button>
+  <button data-v="rule">④ 评分口径</button>
+</div>
+
+<div class="wrap"><div id="demoTip"></div><div id="view"></div></div>
+
+<script>
+/* ============ 数据 ============ */
+const MEMBERS=[
+  {id:'M1',name:'罗宏华',role:'主任·总经理'},
+  {id:'M2',name:'殷伟帅',role:'副主任·经营副总'},
+  {id:'M3',name:'古明',  role:'委员·古明事务所'},
+  {id:'M4',name:'白健良',role:'委员·菁良设计'},
+  {id:'M5',name:'韩龙',  role:'委员'},
+  {id:'M6',name:'潘浩泉',role:'委员·暖通总监'},
+  {id:'M7',name:'侯召君',role:'委员·建筑总监'}
+];
+
+const LEADERS=[
+  {id:'L1',name:'罗宏华',title:'总经理',     scope:'战略·平台·财务综合部'},
+  {id:'L2',name:'殷伟帅',title:'副总经理',   scope:'市场经营·履约·财务'},
+  {id:'L3',name:'刘红涛',title:'副总经理',   scope:'工程咨询·综合管理'},
+  {id:'L4',name:'陈帅召',title:'副总经理',   scope:'方案创作·品牌'},
+  {id:'L5',name:'董利斌',title:'副总经理',   scope:'设计总包·研发·培训'}
+];
+
+/* 五项，分值与题目一致 */
+const ITEMS=[
+  {k:'i1',n:'评对题',max:20,d:'他评的，是不是这个岗该干的事'},
+  {k:'i2',n:'拉开差',max:25,d:'他有没有真打分，还是都给一个分，分数要散开'},
+  {k:'i3',n:'说得实',max:20,d:'他写的理由是事实，还是空话'},
+  {k:'i4',n:'看得准',max:20,d:'他看人准不准——他排的高低，跟实际干得好坏对不对得上'},
+  {k:'i5',n:'做到位',max:15,d:'该做的做完没有：人都评了、都谈了、该改的有计划'}
+];
+
+/* 各档参考（供 7 位委员口径统一） */
+const REF={
+  i1:{full:'每条扣分/加分都能指回本岗职责条款，无一条越界',ok:'基本能对上，偶有以本专业标准评其他岗',low:'多条依据与本岗无关'},
+  i2:{full:'组内分差合理，各档都有人，无堆分',ok:'稍集中，但高低能分开',low:'一组一个分，或忽高忽低跨度极大'},
+  i3:{full:'每条都有具体项目、时间、数字，可核查',ok:'多数有事实，个别是概括话',low:'多为"表现良好"类空话'},
+  i4:{full:'打分排序与客观数据一致，背离处有解释',ok:'总体一致，个别背离未说明',low:'排序与事实明显不符'},
+  i5:{full:'应评全评、逐人面谈、改进有计划',ok:'评全谈全，计划不全',low:'漏评、未谈、无计划'}
+};
+
+/* ============ 状态 ============ */
+const LS='salary_comm_score_2026_v1';
+/* 注意：此处只占位，真正的 load() 放到脚本末尾执行
+   —— seed() 会用到下面的 const memberById，提前执行会撞 TDZ 报错 */
+let S={view:'form', cur:'M1', data:{}, demo:false};
+function blank(){ return {view:'form', cur:'M1', data:{}, demo:false}; }
+
+/* 示例数据：让首次打开就能看到填满的样子；正式使用前点「清空」即可 */
+function seed(){
+  const st=blank(); st.demo=true;
+  const base={           /* 各领导的基准五项（满分 20/25/20/20/15），已按目标短板设定 */
+    L1:[16,19,17,17,13], // 82 · 短板「拉开差」76%
+    L2:[14,19,15,16,12], // 76 · 短板「评对题」70%
+    L3:[17,20,18,15,13], // 83 · 短板「看得准」75%
+    L4:[15,19,16,16,10], // 76 · 短板「做到位」67%
+    L5:[17,22,15,17,13]  // 84 · 短板「说得实」75%
+  };
+  const off={M1:-2,M2:-1,M3:-2,M4:1,M5:-3,M6:1,M7:0};   // 各委员的「总分」偏移（宽严），不是每项都偏
+  /* 稳定伪随机：同一组 (委员,领导,项) 每次刷新结果一致，便于核对 */
+  const jit=(a,b,c)=>{ const x=Math.sin(a*13.7+b*7.3+c*3.1)*10000; return (x-Math.floor(x)); };
+  /* 把总分偏移 o 按各项满分比例摊到 5 项上，并校正取整误差，使合计恰好 = 原合计 + o */
+  function spread(b,o){
+    const raw=b.map((x,idx)=>x+o*ITEMS[idx].max/100);
+    const v=raw.map(x=>Math.round(x));
+    let diff=Math.round(b.reduce((a,c)=>a+c,0)+o)-v.reduce((a,c)=>a+c,0);
+    const order=raw.map((x,i)=>({i,f:x-Math.floor(x)})).sort((p,q)=>q.f-p.f);
+    let k=0;
+    while(diff!==0 && k<order.length*3){
+      const i=order[k%order.length].i, step=diff>0?1:-1, nv=v[i]+step;
+      if(nv>=0 && nv<=ITEMS[i].max){ v[i]=nv; diff-=step; }
+      k++;
+    }
+    return v;
+  }
+  MEMBERS.forEach((m,mi)=>{
+    LEADERS.forEach((l,li)=>{
+      if(isSelf(m.id,l.id)) return;
+      const o=off[m.id];
+      const v=spread(base[l.id].slice(), o);
+      /* 「拉开差」「做到位」不再扰动，保证短板判断稳定 */
+      [0,2,3].forEach((idx,ci)=>{
+        const d=(jit(mi,li,ci)<0.34?-1:(jit(mi,li,ci)>0.74?1:0));
+        v[idx]=Math.max(0,Math.min(ITEMS[idx].max,v[idx]+d));
+      });
+      const note=(o<=-2&&jit(mi,li,9)>0.4)
+        ? ['有两处给了低分但没写具体事例，建议补一句事实依据。',
+           '「做到位」一项偏低，未见整改闭环的说明，请补。',
+           '同一事项与其他委员差 2 分以上，请说明判断依据。'][Math.floor(jit(mi,li,7)*3)]
+        :(o>=1&&jit(mi,li,8)>0.55?'整体偏宽，同一事实比其他委员高 2 分以上，请说明打分依据。':'');
+      st.data[m.id+'_'+l.id]={i1:v[0],i2:v[1],i3:v[2],i4:v[3],i5:v[4],note:note,t:1};
+    });
+  });
+  return st;
+}
+function load(){
+  try{const r=localStorage.getItem(LS); if(r) return Object.assign(blank(),JSON.parse(r));}catch(e){}
+  return seed();
+}
+function save(){ try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){} }
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const r1=n=>Math.round(n*10)/10;
+
+const memberById=id=>MEMBERS.find(m=>m.id===id);
+const leaderById=id=>LEADERS.find(l=>l.id===id);
+
+/* 同名即本人 —— 罗宏华、殷伟帅既是委员又是被考核对象 */
+function isSelf(memberId,leaderId){
+  const m=memberById(memberId), l=leaderById(leaderId);
+  return m && l && m.name===l.name;
+}
+/* 该委员应交几人（排除本人） */
+const needOf=mid=>LEADERS.filter(l=>!isSelf(mid,l.id)).length;
+
+function rec(mid,lid){
+  const d=S.data[mid+'_'+lid];
+  if(!d) return null;
+  let sum=0; ITEMS.forEach(it=>sum+=(+d[it.k]||0));
+  return {v:d,sum};
+}
+
+/* ============ 视图 ============ */
+function render(){
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.view));
+  const sel=$('who');
+  sel.innerHTML=MEMBERS.map(m=>`<option value="${m.id}" ${m.id===S.cur?'selected':''}>${m.name}（${m.role}）</option>`).join('');
+  const m=memberById(S.cur);
+  $('whoTip').textContent=`应交 ${needOf(S.cur)} 份（本人回避）`;
+  $('demoTip').innerHTML = S.demo
+    ? `<div class="note warn no-print" style="margin-top:0">
+         <b>当前显示的是示例数据</b>（便于看清填满后的效果）。正式打分前请先清空。
+         <button class="btn ghost" style="padding:4px 12px;margin-left:10px" onclick="clearAll()">清空全部数据，开始正式打分</button>
+       </div>` : '';
+  const v=S.view;
+  if(v==='form') $('view').innerHTML=viewForm();
+  else if(v==='sum') $('view').innerHTML=viewSum();
+  else if(v==='detail') $('view').innerHTML=viewDetail();
+  else $('view').innerHTML=viewRule();
+  window.scrollTo(0,0);
+}
+function pickMember(id){ S.cur=id; save(); render(); }
+
+function clearAll(){
+  if(!confirm('确认清空全部打分记录？清空后不可恢复。')) return;
+  const cur=S.cur, view=S.view;
+  S=blank(); S.cur=cur; S.view=view; S.demo=false;
+  save(); render();
+}
+
+/* ---------- ① 打分表 ---------- */
+function viewForm(){
+  const mid=S.cur, m=memberById(mid);
+  const targets=LEADERS.filter(l=>!isSelf(mid,l.id));
+  const done=targets.filter(l=>rec(mid,l.id)).length;
+
+  const BLANK=(S.note==='blank');   // 打印空白表模式
+  const cards=targets.map(l=>{
+    const r=BLANK?null:rec(mid,l.id);
+    const self=isSelf(mid,l.id);
+    const val=k=> r? (+r.v[k]||0) : (BLANK?'':Math.round(ITEMS.find(i=>i.k===k).max*0.8));
+    return `<div class="score">
+      <div class="phd">薪酬委员会对高级管理岗考核打分评估表</div>
+      <div class="psub">考核年度 2026　·　委员：${m.name}（${m.role}）　·　被考核人：${l.name}（${l.title}）　·　满分 100 分</div>
+      <div class="sh">
+        <span class="nm">${l.name}</span>
+        <span class="pill p-g">${l.title}</span>
+        <span class="muted">分管：${l.scope}</span>
+        <span class="sp"></span>
+        ${r? `<span class="pill p-ok">已提交 ${r.sum} 分</span>`:`<span class="pill ${BLANK?'p-g':'p-warn'}">${BLANK?'待填（手写）':'待打分'}</span>`}
+      </div>
+      <table>
+        <thead>
+          <tr><th style="width:88px">项目</th><th>考什么</th><th class="c" style="width:56px">满分</th><th class="c" style="width:96px">打分</th><th style="width:210px">档位参考</th></tr>
+        </thead>
+        <tbody>
+        ${ITEMS.map(it=>`
+          <tr>
+            <td><b>${it.n}</b></td>
+            <td class="muted">${it.d}</td>
+            <td class="c">${it.max}</td>
+            <td class="c"><input type="number" id="in_${l.id}_${it.k}" min="0" max="${it.max}" step="1"
+                value="${val(it.k)}" oninput="onInput('${l.id}','${it.k}',this)" ${self?'disabled':''}>
+              <span class="hint">0—${it.max}</span></td>
+            <td class="muted" style="font-size:11.5px">满分：${REF[it.k].full}<br>中档：${REF[it.k].ok}<br>低档：${REF[it.k].low}</td>
+          </tr>`).join('')}
+        </tbody>
+        <tfoot>
+          <tr><td colspan="3">合计</td>
+            <td class="c"><span id="tt_${l.id}" style="font-size:16px;color:var(--orange)">${r?r.sum:(BLANK?'—':ITEMS.reduce((a,i)=>a+Math.round(i.max*0.8),0))}</span></td>
+            <td class="muted" style="font-size:11.5px" id="lv_${l.id}">${BLANK?'对应结论：—':gradeText(r?r.sum:80)}</td></tr>
+        </tfoot>
+      </table>
+      <div class="ft">
+        <div class="muted" style="margin-bottom:5px">评语与依据（选填；给低分的项目请写明具体事例，便于被考核人申辩）</div>
+        <textarea id="nt_${l.id}" placeholder="例：给徐蕾打 79 分，较其客观数据低 18 分，未说明理由；另有 2 人无举证">${r?esc(r.v.note||''):''}</textarea>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:9px">
+          <button class="btn orange" onclick="submitOne('${l.id}')" ${self?'disabled':''}>提交「${l.name}」这一份</button>
+          <span class="muted" id="msg_${l.id}"></span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="card">
+    <h3>${m.name} 的评分任务（应交 ${needOf(mid)} 份，已交 ${BLANK?0:done} 份）</h3>
+    <div class="note" style="margin:0">
+      五项合计 <b>100 分</b>：评对题 20 ＋ 拉开差 25 ＋ 说得实 20 ＋ 看得准 20 ＋ 做到位 15。<br>
+      <b>本人回避：</b>${isSelf(mid,'L1')||isSelf(mid,'L2')?'您是公司领导，系统已自动排除您本人，不出现自评栏。':'您不是被考核对象，5 位领导全部需要打分。'}
+    </div>
+    ${targets.length<5?`<div class="note warn" style="margin-bottom:0">本次需打 ${targets.length} 份（已扣除本人），与该委员应交数一致。</div>`:''}
+    <div style="margin-top:12px" class="no-print">
+      <button class="btn" onclick="printSheet()">打印这 ${targets.length} 份表（A4，一人一页）</button>
+      <button class="btn ghost" onclick="printBlank()">打印空白表（手填用）</button>
+    </div>
+  </div>
+  ${cards}`;
+}
+
+/* 打印当前委员已填的表 */
+function printSheet(){ setTimeout(()=>window.print(),200); }
+/* 打印空白表：临时清空数据，打印完自动恢复（未写入本地存储，刷新也不会丢） */
+function printBlank(){
+  if(!confirm('将打印空白表（不带分数）。打印结束后数据自动恢复，是否继续？')) return;
+  const bak=JSON.stringify(S.data);
+  S.data={}; S.note='blank'; render();
+  const restore=()=>{ try{ S.data=JSON.parse(bak); }catch(e){ S.data={}; } S.note=''; render(); };
+  window.onafterprint=restore;
+  setTimeout(()=>{ window.print(); setTimeout(restore,1500); },300);
+}
+
+function gradeText(s){
+  if(s>=90) return '对应结论：优秀';
+  if(s>=80) return '对应结论：胜任';
+  if(s>=70) return '对应结论：基本胜任';
+  return '对应结论：不胜任';
+}
+
+function onInput(lid,k,el){
+  const it=ITEMS.find(i=>i.k===k);
+  let v=parseInt(el.value,10);
+  if(isNaN(v)) v=0;
+  if(v<0) v=0; if(v>it.max) v=it.max;
+  if(String(v)!==String(el.value)) el.value=v;   // 越界即刻回写，避免界面与合计不一致
+  let sum=0;
+  ITEMS.forEach(i=>{ const e=$('in_'+lid+'_'+i.k); sum+= e? (parseInt(e.value,10)||0):0; });
+  $('tt_'+lid).textContent=sum;
+  $('lv_'+lid).textContent=gradeText(sum);
+}
+
+function submitOne(lid){
+  const mid=S.cur;
+  if(isSelf(mid,lid)) return;
+  const o={}, miss=[];
+  ITEMS.forEach(it=>{
+    const e=$('in_'+lid+'_'+it.k);
+    let v=parseInt(e.value,10);
+    if(isNaN(v)){ v=0; }
+    if(v<0||v>it.max){ miss.push(it.n+' 应为 0—'+it.max); }
+    o[it.k]=Math.max(0,Math.min(it.max,v));
+  });
+  if(miss.length){ $('msg_'+lid).innerHTML='<span style="color:var(--bad)">'+miss.join('；')+'</span>'; return; }
+  o.note=$('nt_'+lid).value.trim();
+  o.t=Date.now();
+  S.data[mid+'_'+lid]=o;
+  save();
+  $('msg_'+lid).innerHTML='<span style="color:var(--ok)">已提交</span>';
+  setTimeout(render,420);
+}
+
+/* ---------- ② 汇总表 ---------- */
+function viewSum(){
+  /* 矩阵：行=委员，列=领导 */
+  const head=`<tr><th style="width:9%">委员</th><th style="width:18.5%">身份</th>
+    ${LEADERS.map(l=>`<th class="c" style="width:11.3%">${l.name}<div style="font-weight:400;font-size:11.5px;color:var(--sub)">${l.title}</div></th>`).join('')}
+    <th class="c" style="width:7.5%">已交/<br>应交</th><th class="num" style="width:7%">均分</th></tr>`;
+
+  const rows=MEMBERS.map(m=>{
+    let sum=0,cnt=0;
+    const tds=LEADERS.map(l=>{
+      if(isSelf(m.id,l.id)) return `<td class="c self">本人回避</td>`;
+      const r=rec(m.id,l.id);
+      if(!r) return `<td class="c none">未评</td>`;
+      sum+=r.sum; cnt++;
+      return `<td class="c"><b>${r.sum}</b></td>`;
+    }).join('');
+    return `<tr>
+      <td><b>${m.name}</b></td>
+      <td class="muted" style="font-size:12px">${m.role}</td>
+      ${tds}
+      <td class="c">${cnt}/${needOf(m.id)}</td>
+      <td class="num avg">${cnt? r1(sum/cnt):'—'}</td>
+    </tr>`;
+  }).join('');
+
+  /* 每位领导的汇总行 */
+  const per=LEADERS.map(l=>{
+    const list=MEMBERS.map(m=>rec(m.id,l.id)).filter(Boolean);
+    const n=list.length, need=MEMBERS.filter(m=>!isSelf(m.id,l.id)).length;
+    if(!n) return {l,n,need,avg:null,items:null,mx:null,mn:null};
+    const sums=list.map(x=>x.sum);
+    const items=ITEMS.map(it=>({k:it.n,max:it.max,v:r1(list.reduce((a,x)=>a+(+x.v[it.k]||0),0)/n)}));
+    return {l,n,need,avg:r1(sums.reduce((a,b)=>a+b,0)/n),items,mx:Math.max.apply(null,sums),mn:Math.min.apply(null,sums)};
+  });
+
+  const perRows=per.map(p=>{
+    const lv=p.avg==null? '<span class="pill p-warn">未评</span>'
+      : p.avg>=90? '<span class="pill p-ok">优秀</span>'
+      : p.avg>=80? '<span class="pill p-info">胜任</span>'
+      : p.avg>=70? '<span class="pill p-warn">基本胜任</span>'
+      : '<span class="pill p-bad">不胜任</span>';
+    return `<tr>
+      <td><b>${p.l.name}</b></td>
+      <td class="muted">${p.l.title}</td>
+      <td class="num">${p.n}/${p.need}</td>
+      <td class="num avg">${p.avg==null?'—':p.avg}</td>
+      <td class="num">${p.mx??'—'}</td>
+      <td class="num">${p.mn??'—'}</td>
+      <td class="num">${p.mx!=null?r1(p.mx-p.mn):'—'}</td>
+      <td>${lv}</td>
+      <td>${p.avg==null?'':`<div class="bar"><i style="width:${Math.min(100,p.avg)}%"></i></div>`}</td>
+    </tr>`;
+  }).join('');
+
+  /* 完成率 */
+  let filled=0,total=0;
+  MEMBERS.forEach(m=>LEADERS.forEach(l=>{ if(!isSelf(m.id,l.id)){ total++; if(rec(m.id,l.id)) filled++; } }));
+
+  const avgAll=MEMBERS.map(m=>{
+    let s=0,c=0; LEADERS.forEach(l=>{ if(isSelf(m.id,l.id))return; const r=rec(m.id,l.id); if(r){s+=r.sum;c++;} });
+    return c? s/c : null;
+  }).filter(x=>x!=null);
+
+  const bigAvg=avgAll.length? r1(avgAll.reduce((a,b)=>a+b,0)/avgAll.length) : '—';
+  const spread=avgAll.length>1? r1(Math.max.apply(null,avgAll)-Math.min.apply(null,avgAll)) : '—';
+
+  return `<div class="card">
+    <div class="cap">薪酬委员会对高级管理岗考核打分评估表</div>
+    <div class="cap2">考核年度 2026　·　委员 7 人　·　被考核公司领导 5 人　·　满分 100 分</div>
+    <h3>一、各委员打分情况（行＝委员，列＝被考核领导，格内为合计分）</h3>
+    <table class="mx">
+      <thead>${head}</thead>
+      <tbody>${rows}</tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">各领导平均（委员均值）</td>
+          ${LEADERS.map(l=>{const p=per.find(x=>x.l.id===l.id);return `<td class="c">${p.avg==null?'—':p.avg}</td>`;}).join('')}
+          <td class="c">${filled}/${total}</td>
+          <td class="num">${bigAvg}</td>
+        </tr>
+      </tfoot>
+    </table>
+    <div class="note ${filled===total?'ok':'warn'}" style="margin-bottom:0">
+      <b>提交情况：</b>应交 ${total} 份，已交 ${filled} 份，完成率 ${total?Math.round(filled/total*100):0}%。
+      ${filled<total?'<b>未交齐不影响已交分的统计，但汇总结论须待交齐后出具。</b>':'已全部交齐。'}
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>二、被考核领导汇总（按平均分）</h3>
+    <table>
+      <thead>
+        <tr><th>被考核领导</th><th>职务</th><th class="num">参评/应交</th><th class="num">平均分</th>
+        <th class="num">最高</th><th class="num">最低</th><th class="num">极差</th><th class="c">结论</th><th style="width:130px">分数带</th></tr>
+      </thead>
+      <tbody>${perRows}</tbody>
+    </table>
+    <div class="note"><b>怎么读这张表：</b>平均分看水平，<b>极差看分歧</b>。极差超过 20 分，说明委员之间对这位领导的判断差别很大，应当开会对齐口径，而不是简单取平均。</div>
+  </div>
+
+  <div class="card">
+    <h3>三、分项平均（看短板在哪一项）</h3>
+    <table>
+      <thead><tr><th style="width:130px">被考核领导</th>
+        ${ITEMS.map(it=>`<th class="num">${it.n}<div style="font-weight:400;font-size:11.5px;color:var(--sub)">满分 ${it.max}</div></th>`).join('')}
+        <th>最低项（按得分率）</th></tr></thead>
+      <tbody>
+      ${per.map(p=>{
+        if(!p.items) return `<tr><td><b>${p.l.name}</b></td><td colspan="${ITEMS.length}" class="muted">未评</td><td>—</td></tr>`;
+        const min=p.items.reduce((a,b)=>(a.v/a.max<=b.v/b.max)?a:b);
+        const pct=Math.round(min.v/min.max*100);
+        return `<tr><td><b>${p.l.name}</b></td>
+          ${p.items.map(x=>`<td class="num">${x.v}</td>`).join('')}
+          <td><span class="pill p-warn">${min.k} ${min.v}/${min.max}（${pct}%）</span></td></tr>`;
+      }).join('')}
+      </tbody>
+    </table>
+    <div class="muted" style="margin-top:8px">分项平均用于定位整改方向。若某人「评对题」「说得实」偏低，问题在评人方法；若「拉开差」「看得准」偏低，问题在评价准确度；若「做到位」偏低，问题在执行闭环。</div>
+  </div>
+
+  <div class="card no-print">
+    <h3>四、导出</h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn ghost" onclick="exportCSV()">导出 CSV（明细，可用 Excel 打开）</button>
+      <button class="btn ghost" onclick="window.print()">打印本页（A4 汇总表）</button>
+      <span class="muted" id="expMsg" style="align-self:center"></span>
+    </div>
+    <div class="note warn" style="margin-bottom:0">CSV 含委员姓名与分值，属内部资料，<b>不得外发</b>；打印后按涉密材料管理。</div>
+  </div>`;
+}
+
+function printSum(){ S.view='sum'; save(); render(); setTimeout(()=>window.print(),300); }
+
+/* ---------- ③ 分项明细 ---------- */
+function viewDetail(){
+  const blocks=LEADERS.map(l=>{
+    const rs=MEMBERS.filter(m=>!isSelf(m.id,l.id)).map(m=>({m,r:rec(m.id,l.id)})).filter(x=>x.r);
+    if(!rs.length) return `<div class="card"><h3>${l.name}（${l.title}）</h3><div class="muted">尚无委员提交。</div></div>`;
+    return `<div class="card">
+      <h3>${l.name}　<span class="muted" style="font-weight:400;font-size:13px">${l.title} · ${l.scope}</span></h3>
+      <table class="dt">
+        <thead><tr><th style="width:96px">委员</th>
+          ${ITEMS.map(it=>`<th class="num" style="width:60px">${it.n}<div style="font-weight:400;font-size:11px;color:var(--sub)">${it.max}</div></th>`).join('')}
+          <th class="num" style="width:56px;padding-right:16px">合计</th><th style="width:88px">结论</th></tr></thead>
+        <tbody>
+        ${rs.map(({m,r})=>`<tr>
+          <td>${m.name}</td>
+          ${ITEMS.map(it=>`<td class="num">${r.v[it.k]??0}</td>`).join('')}
+          <td class="num"><b>${r.sum}</b></td>
+          <td>${r.sum>=90?'<span class="pill p-ok">优秀</span>':r.sum>=80?'<span class="pill p-info">胜任</span>':r.sum>=70?'<span class="pill p-warn">基本胜任</span>':'<span class="pill p-bad">不胜任</span>'}</td>
+        </tr>`).join('')}
+        </tbody>
+      </table>
+      ${rs.filter(x=>(x.r.v.note||'').trim()).map(x=>
+        `<div class="muted" style="margin-top:8px;font-size:12.5px"><b>${x.m.name} 评语：</b>${esc(x.r.v.note)}</div>`).join('')}
+    </div>`;
+  }).join('');
+  return `<div class="card">
+    <div class="cap">薪酬委员会对高级管理岗考核打分评估表</div>
+    <div class="cap2">考核年度 2026　·　委员 7 人　·　被考核公司领导 5 人　·　分项明细</div>
+    <h3>分项明细（按被考核人分组）</h3>
+    <div class="muted">用于核对个别分数：谁在哪一项给了高分或低分，一目了然。给低分且无评语的，委员会应要求说明。</div></div>${blocks}`;
+}
+
+/* ---------- ④ 口径 ---------- */
+function viewRule(){
+  return `<div class="card">
+    <h3>评分口径（七位委员统一用这一把尺）</h3>
+    <table>
+      <thead><tr><th style="width:88px">项目</th><th class="c" style="width:56px">满分</th><th>考什么</th><th>满分标准</th><th>中档标准</th><th>低档标准</th></tr></thead>
+      <tbody>
+      ${ITEMS.map(it=>`<tr>
+        <td><b>${it.n}</b></td><td class="c">${it.max}</td>
+        <td class="muted">${it.d}</td>
+        <td class="muted">${REF[it.k].full}</td>
+        <td class="muted">${REF[it.k].ok}</td>
+        <td class="muted">${REF[it.k].low}</td></tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>打分规则</h3>
+    <table>
+      <tr><th style="width:150px">事项</th><th>规则</th></tr>
+      <tr><td>总分</td><td>五项合计 100 分：20＋25＋20＋20＋15</td></tr>
+      <tr><td>取值</td><td>每项只填整数，不得超过该项满分，系统自动拦截越界</td></tr>
+      <tr><td>本人回避</td><td><b>不给自己打分。</b>罗宏华、殷伟帅两位既是委员又是被考核对象，其姓名对应的格子自动锁定，标注「本人回避」</td></tr>
+      <tr><td>应交份数</td><td>罗宏华、殷伟帅各 4 份；古明、白健良、韩龙、潘浩泉、侯召君各 5 份；合计 <b>33 份</b></td></tr>
+      <tr><td>评语</td><td>选填。但<b>任一项给到该项满分的 60% 以下时，须写明具体事例</b>，便于被考核人申辩</td></tr>
+      <tr><td>提交后</td><td>可重新修改覆盖，以最后一次提交为准</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>结论换算</h3>
+    <table>
+      <tr><th class="c">平均分</th><th>结论</th><th>后续</th></tr>
+      <tr><td class="c">90—100</td><td><span class="pill p-ok">优秀</span></td><td>可考虑扩大分管范围、提高职级系数</td></tr>
+      <tr><td class="c">80—89</td><td><span class="pill p-info">胜任</span></td><td>正常兑现</td></tr>
+      <tr><td class="c">70—79</td><td><span class="pill p-warn">基本胜任</span></td><td>限一个季度整改，下期复评</td></tr>
+      <tr><td class="c">70 以下</td><td><span class="pill p-bad">不胜任</span></td><td>交总经理办公会讨论调整分管</td></tr>
+    </table>
+    <div class="note warn"><b>合规提示：</b>结论只用于考核与分配，<b>不得直接作为解除劳动合同的依据</b>。涉此类处理须另行走法定程序，以最新法律法规与河南省／郑州市当地口径为准。</div>
+  </div>
+
+  <div class="card">
+    <h3>口径提醒（容易混的四处）</h3>
+    <table>
+      <tr><th style="width:120px">易混点</th><th>正确说法</th></tr>
+      <tr><td>主任回避</td><td>评总经理时，主任（总经理本人）回避表决与主持，由副主任主持；<b>不适用「主任最终决定权」</b></td></tr>
+      <tr><td>评的是哪件事</td><td>五项全部落在「这次考核工作」上，<b>不评他业务能力强不强</b>——那是 ZG11 高级管理岗考核的事</td></tr>
+      <tr><td>极差过大</td><td>某位领导分数极差超 20 分，先开会对齐口径，<b>不要简单取平均</b>了事</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>企微工作台部署（三步）</h3>
+    <table>
+      <tr><th style="width:60px">步骤</th><th>操作</th></tr>
+      <tr><td>1</td><td>企微管理后台 → 应用管理 → <b>自建应用</b>，应用名称填「薪酬委员会考核评估表」，可见范围只选 7 位委员</td></tr>
+      <tr><td>2</td><td>应用主页填本页地址（HTTPS），工作台会出现独立图标，<b>单列应用</b></td></tr>
+      <tr><td>3</td><td>正式版把本地存储换成云数据库，每位委员登录后只见自己的评分任务；汇总页只对主任、副主任开放</td></tr>
+    </table>
+    <div class="note">当前为单机预演版：数据存在本机浏览器，<b>换电脑或清缓存会丢</b>。正式使用前须接入数据库，并做委员身份绑定（企微 OAuth 静默授权）。</div>
+  </div>`;
+}
+
+/* ---------- 导出 ---------- */
+function exportCSV(){
+  const rows=[['委员','身份','被考核领导','职务','评对题20','拉开差25','说得实20','看得准20','做到位15','合计','结论','评语']];
+  MEMBERS.forEach(m=>LEADERS.forEach(l=>{
+    if(isSelf(m.id,l.id)) return;
+    const r=rec(m.id,l.id); if(!r) return;
+    const lv=r.sum>=90?'优秀':r.sum>=80?'胜任':r.sum>=70?'基本胜任':'不胜任';
+    rows.push([m.name,m.role,l.name,l.title,r.v.i1||0,r.v.i2||0,r.v.i3||0,r.v.i4||0,r.v.i5||0,r.sum,lv,(r.v.note||'').replace(/[\r\n]+/g,' ')]);
+  }));
+  const csv='\ufeff'+rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='薪酬委员会考核打分明细_2026.csv';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+  if($('expMsg')) $('expMsg').textContent='已导出 '+rows.length-1+' 条';
+}
+
+/* ---------- 交互绑定 ---------- */
+document.querySelectorAll('#tabs button').forEach(b=>{
+  b.onclick=()=>{ S.view=b.dataset.v; save(); render(); };
+});
+
+/* 所有 const 与函数均已就绪，此时再读数据；hash 必须在读数据之后解析 */
+S=load();
+(function(){
+  const h=(location.hash||'').replace('#','');
+  if(['form','sum','detail','rule'].indexOf(h)>=0) S.view=h;
+})();
+render();
+</script>
+</body>
+</html>
